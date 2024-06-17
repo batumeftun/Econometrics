@@ -1,7 +1,7 @@
+#Load libraries
 install.packages("xts")
 install.packages("dplyr")
 install.packages("quantmod")
-
 library(quantmod)
 library(dplyr)
 library(xts) 
