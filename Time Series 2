@@ -1,0 +1,55 @@
+#load libraries
+library(wooldridge)
+library(dplyr)
+library(quantmod)
+library(xts) 
+library(forecast)
+
+# load data
+data("AirPassengers") 
+
+# summary data
+summary(AirPassengers)
+
+#Draw a plot
+plot(AirPassengers)
+
+#  decomposing the series with additive function
+frequency(AirPassengers)
+length(AirPassengers)
+
+model1 <-decompose(AirPassengers, type = "additive")
+plot(decompose(AirPassengers, type = "additive"))
+
+# Model 2 decomposing the series with multiplicative function
+model2 <- decompose(AirPassengers, type = "multiplicative")
+plot(decompose(AirPassengers, type = "multiplicative"))
+
+# Model 3 
+model3 <-  ets(AirPassengers)
+summary(model3)
+plot(model3)
+
+# Extract components from Model 1 (additive decomposition)
+trend_additive <- model1$trend
+seasonal_additive <- model1$seasonal
+
+# Plot original and seasonally adjusted series (additive decomposition)
+par(mfrow = c(2, 1)) # Set up a 2x1 grid of plots
+plot(AirPassengers, main = "Original Series", ylab = "Passengers")
+plot(trend_additive + seasonal_additive, main = "Seasonally Adjusted Series (Additive)", ylab = "Passengers")
+
+# Extract components from Model 2 (multiplicative decomposition)
+trend_multiplicative <- model2$trend
+seasonal_multiplicative <- model2$seasonal
+
+# Plot original and seasonally adjusted series (multiplicative decomposition)
+par(mfrow = c(2, 1)) # Set up a 2x1 grid of plots
+plot(AirPassengers, main = "Original Series", ylab = "Passengers")
+plot(trend_multiplicative * seasonal_multiplicative, main = "Seasonally Adjusted Series (Multiplicative)", ylab = "Passengers")
+
+
+
+
+
+
