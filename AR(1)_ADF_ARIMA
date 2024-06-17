@@ -1,0 +1,134 @@
+##### AR(1)
+plot(AirPassengers) 
+AR <- arima(AirPassengers, order = c(1, 0, 0))
+print(AR)
+Residuals <- residuals(AR)
+plot(Residuals)
+AirPassengers_fitted <- AirPassengers - Residuals
+plot(AirPassengers_fitted)
+plot(AirPassengers, col="black")
+lines(AirPassengers_fitted, col="red") 
+
+### Now we estimate a random walk (RW) process
+
+### With rnorm() we generate random normal variable, and using cumsum() we get the RW.
+
+RW <- function(N, x0, mu, variance) {
+  z<-cumsum(rnorm(n=N, mean=0, 
+                  sd=sqrt(variance)))
+  t<-1:N
+  x<-x0+t*mu+z
+  return(x)
+}
+# mu is the drift
+
+RW1<-RW(50,0,0,0.0005)
+RW2<-RW(50,0,0,0.0005)
+plot(RW1, main="RW process", 
+     xlab="t",ylab="y", ylim=c(-0.3,0.3),
+     typ='l', col="blue")
+par(new=T)
+plot(RW2, main="RW process", 
+     xlab="t",ylab="y", ylim=c(-0.3,0.3),
+     typ='l', col="red")
+
+### Perform an Augmented Dickey-Fuller Test
+
+###Plot GDP
+
+install.packages('parallel')
+install.packages('tidyverse')
+install.packages('readxl')
+install.packages('here')
+install.packages('tseries')
+install.packages("plotly")
+install.packages('zoo')
+install.packages("rugarch")
+install.packages("fUnitRoots")
+install.packages("TSstudio")
+library(readxl)
+library(tidyverse)
+library(here)
+library(tseries)
+library(plotly)
+library(xts)
+library(zoo)
+library(rugarch)
+library(parallel)
+library(fUnitRoots)
+library(TSstudio)
+
+gdp_data = read.table(file="clipboard", header = TRUE)
+
+class(gdp_data)
+
+gdp_data_ts <- as.xts(gdp_data[,-1], order.by=as.Date(gdp_data[,1], format='%d/%m/%Y'))
+
+class(gdp_data_ts)
+
+plot(gdp_data_ts)
+
+ts.plot(gdp_data_ts)
+
+
+### Perform Dickey Fuller test
+
+apply(gdp_data_ts, 2, adf.test)
+
+apply(gdp_data_ts, 2, adfTest, lags=1, type="c")
+
+GDP_diff <- diff(gdp_data_ts)
+
+ts.plot(GDP_diff)
+
+GDP_diff_1 = GDP_diff[-1,]
+
+apply(GDP_diff_1, 2, adf.test)
+
+
+
+#ARIMA Models
+
+#################################################################################
+
+
+### What would the ARIMA function recommend... Mmm, let me show you how this works,
+# and then you can come back to see by yourself during the seminar...
+
+###############
+
+plot(lynx,
+     main = "Lynx trapped in Canada",
+     legend.loc = "topleft")
+
+library(forecast)
+
+tsdisplay(lynx)
+
+modelarima1 <- auto.arima(lynx)
+
+summary(modelarima1)
+
+forecast_modelarima1 = forecast(modelarima1, h = 12)
+
+
+plot(forecast_modelarima1)
+
+
+
+#You can set the stepwise function to false so the function looks closely at each model and improves the solution.
+#You can set the trace function to true so you can track all the models tested.
+#You can set the approximation function to false so it looks closely at the information criteria.
+
+
+modelarima2 <- auto.arima(lynx, trace=T,
+                          stepwise = F,
+                          approximation = F)
+
+summary(modelarima2)
+
+
+forecast_modelarima2 = forecast(modelarima2, h = 12)
+
+
+plot(forecast_modelarima2)
